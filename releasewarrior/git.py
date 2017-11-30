@@ -33,6 +33,13 @@ def commit(files, msg, logger, config):
         logger.debug(patch)
 
 
+def push(logger, config):
+    repo = Repo(config['releasewarrior_data_repo'])
+    upstream = find_upstream_repo(repo, logger, config)
+    logger.info("pushing changes to %s", list(upstream.urls)[0])
+    upstream.push(refspec='master:master')
+
+
 def move(src, dest, logger, config):
     logger.debug("archiving {src} to {dest}", src, dest)
     repo = Repo(config['releasewarrior_data_repo'])
