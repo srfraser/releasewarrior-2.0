@@ -31,3 +31,10 @@ def commit(files, msg, logger, config):
     commit = repo.index.commit(msg)
     for patch in repo.commit("HEAD~1").diff(commit, create_patch=True):
         logger.debug(patch)
+
+
+def push(logger, config):
+    repo = Repo(config['releasewarrior_data_repo'])
+    upstream = find_upstream_repo(repo, logger, config)
+    logger.info("pushing changes to %s", list(upstream.urls)[0])
+    upstream.push(refspec='master:master')
