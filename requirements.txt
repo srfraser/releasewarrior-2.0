@@ -1,7 +1,9 @@
+aiohttp==2.3.10
+async-timeout==1.4.0
 pytest==3.2.2
 click==6.7
 GitPython==2.1.5
 Jinja2==2.9.6
 PyYAML==3.12
 arrow==0.10.0
-
+taskcluster==2.1.3
