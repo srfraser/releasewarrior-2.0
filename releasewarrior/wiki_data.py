@@ -347,6 +347,13 @@ def update_inflight_graphid(data, phase, graphid, logger):
     return data
 
 
+def update_inflight_revision(data, revision, logger):
+    data = deepcopy(data)
+    current_build_index = get_current_build_index(data)
+    data["inflight"][current_build_index]["revision"] = revision
+    return data
+
+
 def generate_release_postmortem_data(release):
     postmortem_release = {
         "version": release['version'],

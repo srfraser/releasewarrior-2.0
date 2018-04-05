@@ -31,9 +31,11 @@ from releasewarrior.wiki_data import (
     update_inflight_graphid,
     update_inflight_human_tasks,
     update_inflight_issue,
+    update_inflight_revision,
     update_prereq_human_tasks,
     write_and_commit,
 )
+from releasewarrior.taskcluster import display_graphids
 
 LOGGER = get_logger(verbose=False)
 CONFIG = get_config()
@@ -187,6 +189,27 @@ def graphid(graphid, product, version, phase, logger=LOGGER, config=CONFIG):
 
     data = order_data(data)
     write_and_commit(data, data_path, wiki_path, commit_msg, logger, config)
+
+
+@cli.command()
+@click.argument('revision')
+@click.argument('product', type=click.Choice(['firefox', 'devedition', 'fennec', 'thunderbird']))
+@click.argument('version')
+def revision(revision, product, version, logger=LOGGER, config=CONFIG):
+    """Add a revision to a release.
+    product and version is also used to determine branch. e.g 57.0rc, 57.0.1, 57.0b2, 52.0.1esr
+    """
+    validate_rw_repo(logger, config)
+    release, data_path, wiki_path = get_release_info(product, version, logger, config)
+    validate(release, logger, config, must_exist=True, must_exist_in="inflight")
+    data = load_json(data_path)
+
+    commit_msg = "{} {} - added hg revision.".format(product, version)
+    data = update_inflight_revision(data, revision, logger)
+
+    data = order_data(data)
+    write_and_commit(data, data_path, wiki_path, commit_msg, logger, config)
+
 
 
 # TODO assign default date to the "next wed"
@@ -355,3 +378,16 @@ def status(verbose, logger=LOGGER, config=CONFIG):
 def data(push, logger=LOGGER, config=CONFIG):
     if push:
         git.push(logger, config)
+
+@cli.command()
+@click.argument('product', type=click.Choice(['firefox', 'devedition', 'fennec', 'thunderbird']))
+@click.argument('version')
+@click.option('--revision', default=None)
+def showtaskids(product, version, revision, logger=LOGGER, config=CONFIG):
+    """Display copy/pastable task IDs."""
+    validate_rw_repo(logger, config)
+    release, data_path, wiki_path = get_release_info(product, version, logger, config)
+    validate(release, logger, config, must_exist=True, must_exist_in="inflight")
+    data = load_json(data_path)
+
+    display_graphids(data, product, version, revision, logger)
