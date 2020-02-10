@@ -398,7 +398,7 @@ first nightly has been built and published with the new version.
 
 1. `git clone git@github.com:mozilla-releng/shipit.git`
 2. `git checkout -b nightly_version_bump_${version}`
-3. Edit FIREFOX_NIGHTLY in https://github.com/mozilla-releng/shipit/blob/master/api/src/shipit_api/config.py#L48
+3. Edit both FIREFOX_NIGHTLY's major version and FENNEC_NIGHTLY (with a minor bump) in https://github.com/mozilla-releng/shipit/blob/master/api/src/shipit_api/config.py#L48
 4. Commit, and submit a pull request
 5. Merge the pull request _after_ a new nightly version has been pushed to CDNs
 
